@@ -232,7 +232,7 @@ public:
 
             auto it = chunks.find(hash);
 
-            if (it == chunks.end()) return 0;
+            if (it == chunks.end()) return 3;
 
             return it->second->voxelMap[x][y][z];
         }

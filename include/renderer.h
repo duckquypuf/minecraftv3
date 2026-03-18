@@ -49,10 +49,9 @@ public:
 
         shader = new Shader(vertPath, fragPath);
 
-        // Load atlas from generated location
         atlasTexture = loadTexture("../atlas/atlas_256x256.png");
-        colourmapTexture = loadTexture("../textures/foliage.png");
         grassmapTexture = loadTexture("../textures/grass.png");
+        colourmapTexture = loadTexture("../textures/foliage.png");
     }
 
     void beginFrame()
@@ -61,25 +60,24 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void renderChunks(World& world, Camera* cam, BlockType type = SOLID) {
-        for(auto& pair : world.chunks) {
-            shader->use();
-            shader->setInt("atlasTex", 0);
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, atlasTexture);
+    void renderChunks(World &world, Camera *cam)
+    {
+        shader->use();
 
-            if(type == GRASS) {
-                shader->setInt("grassmapTex", 1);
-                glActiveTexture(GL_TEXTURE1);
-                glBindTexture(GL_TEXTURE_2D, grassmapTexture);
-            } else if (type == FOLIAGE)
-            {
-                shader->setInt("colourmapTex", 2);
-                glActiveTexture(GL_TEXTURE2);
-                glBindTexture(GL_TEXTURE_2D, colourmapTexture);
-            }
-            pair.second->renderChunk(shader, cam->GetViewMatrix(), cam->GetProjectionMatrix(), type);
-        }
+        // Bind all three textures once — shader selects based on flags
+        shader->setInt("atlasTex", 0);
+        shader->setInt("grassmapTex", 1);
+        shader->setInt("colourmapTex", 2);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, atlasTexture);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, grassmapTexture);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, colourmapTexture);
+
+        for (auto &pair : world.chunks)
+            pair.second->renderChunk(shader, cam->GetViewMatrix(), cam->GetProjectionMatrix());
     }
 
 private:

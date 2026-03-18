@@ -23,21 +23,9 @@ public:
 
     /* MESH */
     unsigned int VAO = 0, VBO = 0;
-    unsigned int waterVAO = 0, waterVBO = 0;
-    unsigned int grassVAO = 0, grassVBO = 0;
-    unsigned int foliageVAO = 0, foliageVBO = 0;
 
     std::vector<int> vertices;
     int vertexCount = 0;
-
-    std::vector<int> waterVertices;
-    int waterVertexCount = 0;
-
-    std::vector<int> grassVertices;
-    int grassVertexCount = 0;
-
-    std::vector<int> foliageVertices;
-    int foliageVertexCount = 0;
 
     bool isMeshed = false;
     bool isPopulated = false;
@@ -76,40 +64,20 @@ public:
         voxelMap[x][y][z] = id;
     }
 
-    void renderChunk(Shader* shader, const glm::mat4 &view, const glm::mat4 &projection, BlockType type = SOLID) {
+    void renderChunk(Shader *shader, const glm::mat4 &view, const glm::mat4 &projection)
+    {
         if (vertexCount == 0)
             return;
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(coord.x * chunkWidth, 0.f, coord.z * chunkWidth));
 
-        if(type == LIQUID) {
-            model = glm::translate(model, glm::vec3(0.f, -0.1f, 0.f));
-        }
-
         shader->setMat4("model", model);
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);
 
-        if(type == LIQUID){
-            glBindVertexArray(waterVAO);
-            glDrawArrays(GL_TRIANGLES, 0, waterVertexCount);
-            glBindVertexArray(0);
-            return;
-        } else if(type == GRASS) {
-            glBindVertexArray(grassVAO);
-            glDrawArrays(GL_TRIANGLES, 0, grassVertexCount);
-            glBindVertexArray(0);
-            return;
-        } else if(type == FOLIAGE) {
-            glBindVertexArray(foliageVAO);
-            glDrawArrays(GL_TRIANGLES, 0, foliageVertexCount);
-            glBindVertexArray(0);
-            return;
-        } else {
-            glBindVertexArray(VAO);
-            glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-            glBindVertexArray(0);
-        }
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+        glBindVertexArray(0);
     }
 };

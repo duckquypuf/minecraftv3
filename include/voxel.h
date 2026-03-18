@@ -2,40 +2,21 @@
 
 #include <string>
 
-enum BlockType {
-    SOLID,
-    LIQUID,
-    GRASS,
-    FOLIAGE
-};
+namespace BlockFlags
+{
+    constexpr int SOLID = 0;
+    constexpr int LIQUID = 1 << 0;
+    constexpr int GRASSMAP = 1 << 1;  // tinted by grass.png
+    constexpr int COLOURMAP = 1 << 2; // tinted by foliage.png
+}
 
-struct Block {
+struct Block
+{
     std::string name;
     bool isSolid = true;
     bool isTransparent = false;
-    BlockType type = SOLID;
+    int flags = BlockFlags::SOLID;
     int textures[6];
-
-    bool operator==(const Block& other) const {
-        return name == other.name;
-    }
-};
-
-struct Grass : Block {
-    int colourmapX;
-    int colourmapY;
-
-    Grass(const Block& block, int colourmapX, int colourmapY) : Block(block), colourmapX(colourmapX), colourmapY(colourmapY) {
-        type = GRASS;
-    }
-};
-
-struct Foliage : Block {
-    int colourmapX;
-    int colourmapY;
-
-    Foliage(const Block& block, int colourmapX, int colourmapY) : Block(block), colourmapX(colourmapX), colourmapY(colourmapY) {
-        type = FOLIAGE;
-        isTransparent = true; 
-    }
+    int colourmapX = 0;
+    int colourmapY = 0;
 };

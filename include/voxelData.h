@@ -45,13 +45,12 @@ static const Block dirt = {
     .name = "Dirt",
     .textures = {0, 0, 0, 0, 0, 0}
 };
-static const Grass grassBlock = {
-    {
-        .name = "Grass_Block",
-        .textures = {1, 1, 2, 0, 1, 1}
-    },
-    51,
-    153
+static const Block grassBlock = {
+    .name = "Grass_Block",
+    .textures = {1, 1, 2, 0, 1, 1},
+    .flags = BlockFlags::GRASSMAP,
+    .colourmapX = 51,
+    .colourmapY = 153
 };
 static const Block stone = {
     .name = "Stone",
@@ -61,7 +60,7 @@ static const Block water = {
     .name = "Water",
     .isSolid = false,
     .isTransparent = true,
-    .type = LIQUID,
+    .flags = BlockFlags::LIQUID,
     .textures = {4, 4, 4, 4, 4, 4}
 };
 static const Block sand = {
@@ -72,12 +71,13 @@ static const Block oakLog = {
     .name="Oak Log",
     .textures={6, 6, 7, 7, 6, 6}
 };
-static const Foliage oakLeaves = {{
-        .name="Oak Leaves", 
-        .textures={8, 8, 8, 8, 8, 8}
-    }, 
-    50, 
-    173
+static const Block oakLeaves = {
+    .name="Oak Leaves", 
+    .isTransparent = true,
+    .textures={8, 8, 8, 8, 8, 8},
+    .flags = BlockFlags::COLOURMAP,
+    .colourmapX = 50, 
+    .colourmapY = 173
 };
 
 
