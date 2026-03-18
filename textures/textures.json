@@ -1,7 +1,7 @@
 {
     "textures": [
         "dirt.png",
-        "grass_side.png",
+        "grass_side_overlay.png",
         "grass_top.png",
         "stone.png",
         "water.png",

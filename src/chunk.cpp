@@ -22,7 +22,9 @@ void Chunk::populateVoxelMap(World* world) {
 void Chunk::generateMesh(World *world)
 {
     vertices.clear();
+    liquidVertices.clear();
     vertexCount = 0;
+    liquidVertexCount = 0;
 
     for (int y = 0; y < chunkHeight; y++)
     {
@@ -34,6 +36,8 @@ void Chunk::generateMesh(World *world)
                 if (voxelMap[x][y][z] == 0)
                     continue;
 
+                bool isLiquid = (self->flags & BlockFlags::LIQUID);
+
                 for (int f = 0; f < 6; f++)
                 {
                     int fx = x + faceChecks[f].x;
@@ -42,72 +46,68 @@ void Chunk::generateMesh(World *world)
 
                     const Block *neighbour = blocks[world->getVoxel(this, fx, fy, fz)];
 
-                    if (!neighbour->isTransparent) // neighbour is opaque so you cant see this face
+                    if ((self->flags & BlockFlags::LIQUID) && (neighbour->flags & BlockFlags::LIQUID))
                         continue;
 
-                    // Liquid faces: skip same-liquid neighbours
-                    if ((self->flags & BlockFlags::LIQUID) &&
-                        (neighbour->flags & BlockFlags::LIQUID) &&
-                        neighbour == self)
+                    if (!neighbour->isTransparent)
                         continue;
+
+                    auto &target = isLiquid ? liquidVertices : vertices;
+                    auto &targetCount = isLiquid ? liquidVertexCount : vertexCount;
 
                     for (int p = 0; p < 6; p++)
                     {
-                        vertices.emplace_back(cubeVertices[faces[f][p]].x + x);
-                        vertices.emplace_back(cubeVertices[faces[f][p]].y + y);
-                        vertices.emplace_back(cubeVertices[faces[f][p]].z + z);
-                        vertices.emplace_back(faceChecks[f].x);
-                        vertices.emplace_back(faceChecks[f].y);
-                        vertices.emplace_back(faceChecks[f].z);
-                        vertices.emplace_back(self->textures[f]);
-                        vertices.emplace_back(self->colourmapX);
-                        vertices.emplace_back(self->colourmapY);
-                        vertices.emplace_back(self->flags);
+                        target.emplace_back(cubeVertices[faces[f][p]].x + x);
+                        target.emplace_back(cubeVertices[faces[f][p]].y + y);
+                        target.emplace_back(cubeVertices[faces[f][p]].z + z);
+                        target.emplace_back(faceChecks[f].x);
+                        target.emplace_back(faceChecks[f].y);
+                        target.emplace_back(faceChecks[f].z);
+                        target.emplace_back(self->textures[f]);
+                        target.emplace_back(self->overlayTextures[f]);
+                        target.emplace_back(self->colourmapX);
+                        target.emplace_back(self->colourmapY);
+                        target.emplace_back(self->flags);
                     }
-                    vertexCount += 6;
+                    targetCount += 6;
                 }
             }
         }
     }
 
-    if (VAO == 0)
+    constexpr int STRIDE = 11 * sizeof(int);
+
+    // Helper lambda to avoid repeating the attrib pointer setup
+    auto setupVAO = [&](unsigned int &vao, unsigned int &vbo, std::vector<int> &verts)
     {
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-    }
+        if (vao == 0)
+        {
+            glGenVertexArrays(1, &vao);
+            glGenBuffers(1, &vbo);
+        }
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(int), verts.data(), GL_STATIC_DRAW);
+        glVertexAttribIPointer(0, 3, GL_INT, STRIDE, (void *)(0)); // pos
+        glEnableVertexAttribArray(0);
+        glVertexAttribIPointer(1, 3, GL_INT, STRIDE, (void *)(3 * sizeof(int))); // normal
+        glEnableVertexAttribArray(1);
+        glVertexAttribIPointer(2, 1, GL_INT, STRIDE, (void *)(6 * sizeof(int))); // textureID
+        glEnableVertexAttribArray(2);
+        glVertexAttribIPointer(3, 1, GL_INT, STRIDE, (void *)(7 * sizeof(int))); // overlayTextureID
+        glEnableVertexAttribArray(3);
+        glVertexAttribIPointer(4, 1, GL_INT, STRIDE, (void *)(8 * sizeof(int))); // colourmapX
+        glEnableVertexAttribArray(4);
+        glVertexAttribIPointer(5, 1, GL_INT, STRIDE, (void *)(9 * sizeof(int))); // colourmapY
+        glEnableVertexAttribArray(5);
+        glVertexAttribIPointer(6, 1, GL_INT, STRIDE, (void *)(10 * sizeof(int))); // flags
+        glEnableVertexAttribArray(6);
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    };
 
-    constexpr int STRIDE = 10 * sizeof(int);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(int), vertices.data(), GL_STATIC_DRAW);
-
-    // location 0: position
-    glVertexAttribIPointer(0, 3, GL_INT, STRIDE, (void *)(0));
-    glEnableVertexAttribArray(0);
-
-    // location 1: normal
-    glVertexAttribIPointer(1, 3, GL_INT, STRIDE, (void *)(3 * sizeof(int)));
-    glEnableVertexAttribArray(1);
-
-    // location 2: textureID
-    glVertexAttribIPointer(2, 1, GL_INT, STRIDE, (void *)(6 * sizeof(int)));
-    glEnableVertexAttribArray(2);
-
-    // location 3: colourmapX
-    glVertexAttribIPointer(3, 1, GL_INT, STRIDE, (void *)(7 * sizeof(int)));
-    glEnableVertexAttribArray(3);
-
-    // location 4: colourmapY
-    glVertexAttribIPointer(4, 1, GL_INT, STRIDE, (void *)(8 * sizeof(int)));
-    glEnableVertexAttribArray(4);
-
-    // location 5: flags
-    glVertexAttribIPointer(5, 1, GL_INT, STRIDE, (void *)(9 * sizeof(int)));
-    glEnableVertexAttribArray(5);
-
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    setupVAO(VAO, VBO, vertices);
+    setupVAO(liquidVAO, liquidVBO, liquidVertices);
 
     isMeshed = true;
 }

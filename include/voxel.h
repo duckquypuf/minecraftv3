@@ -17,6 +17,7 @@ struct Block
     bool isTransparent = false;
     int flags = BlockFlags::SOLID;
     int textures[6];
+    int overlayTextures[6] = {-1, -1, -1, -1, -1, -1};
     int colourmapX = 0;
     int colourmapY = 0;
 };

@@ -23,9 +23,12 @@ public:
 
     /* MESH */
     unsigned int VAO = 0, VBO = 0;
+    unsigned int liquidVAO = 0, liquidVBO = 0;
 
     std::vector<int> vertices;
+    std::vector<int> liquidVertices;
     int vertexCount = 0;
+    int liquidVertexCount = 0;
 
     bool isMeshed = false;
     bool isPopulated = false;
@@ -64,6 +67,22 @@ public:
         voxelMap[x][y][z] = id;
     }
 
+    void renderOpaque(Shader* shader, const glm::mat4& view, const glm::mat4& projection) {
+        if (vertexCount == 0) return;
+        setMatrices(shader, view, projection);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+        glBindVertexArray(0);
+    }
+
+    void renderLiquid(Shader* shader, const glm::mat4& view, const glm::mat4& projection) {
+        if (liquidVertexCount == 0) return;
+        setMatrices(shader, view, projection);
+        glBindVertexArray(liquidVAO);
+        glDrawArrays(GL_TRIANGLES, 0, liquidVertexCount);
+        glBindVertexArray(0);
+    }
+
     void renderChunk(Shader *shader, const glm::mat4 &view, const glm::mat4 &projection)
     {
         if (vertexCount == 0)
@@ -79,5 +98,14 @@ public:
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, vertexCount);
         glBindVertexArray(0);
+    }
+
+private:
+    void setMatrices(Shader *shader, const glm::mat4 &view, const glm::mat4 &projection) {
+        glm::mat4 model = glm::translate(glm::mat4(1.0f),
+                                         glm::vec3(coord.x * chunkWidth, 0.f, coord.z * chunkWidth));
+        shader->setMat4("model", model);
+        shader->setMat4("view", view);
+        shader->setMat4("projection", projection);
     }
 };

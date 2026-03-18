@@ -60,24 +60,29 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void renderChunks(World &world, Camera *cam)
-    {
+    void renderChunks(World& world, Camera* cam) {
         shader->use();
-
-        // Bind all three textures once — shader selects based on flags
-        shader->setInt("atlasTex", 0);
-        shader->setInt("grassmapTex", 1);
+        shader->setInt("atlasTex",     0);
+        shader->setInt("grassmapTex",  1);
         shader->setInt("colourmapTex", 2);
+        glActiveTexture(GL_TEXTURE0); glBindTexture(GL_TEXTURE_2D, atlasTexture);
+        glActiveTexture(GL_TEXTURE1); glBindTexture(GL_TEXTURE_2D, grassmapTexture);
+        glActiveTexture(GL_TEXTURE2); glBindTexture(GL_TEXTURE_2D, colourmapTexture);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, atlasTexture);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, grassmapTexture);
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, colourmapTexture);
+        // Pass 1: opaque — depth write on, culling on
+        glDepthMask(GL_TRUE);
+        glEnable(GL_CULL_FACE);
+        for (auto& pair : world.chunks)
+            pair.second->renderOpaque(shader, cam->GetViewMatrix(), cam->GetProjectionMatrix());
 
-        for (auto &pair : world.chunks)
-            pair.second->renderChunk(shader, cam->GetViewMatrix(), cam->GetProjectionMatrix());
+        // Pass 2: liquid — depth write off, culling off (visible from below too)
+        glDepthMask(GL_FALSE);
+        glDisable(GL_CULL_FACE);
+        for (auto& pair : world.chunks)
+            pair.second->renderLiquid(shader, cam->GetViewMatrix(), cam->GetProjectionMatrix());
+
+        glDepthMask(GL_TRUE);
+        glEnable(GL_CULL_FACE);
     }
 
 private:

@@ -47,7 +47,8 @@ static const Block dirt = {
 };
 static const Block grassBlock = {
     .name = "Grass_Block",
-    .textures = {1, 1, 2, 0, 1, 1},
+    .textures = {0, 0, 2, 0, 0, 0},
+    .overlayTextures = {1, 1, -1, -1, 1, 1},
     .flags = BlockFlags::GRASSMAP,
     .colourmapX = 51,
     .colourmapY = 153
