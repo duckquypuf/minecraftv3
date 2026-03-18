@@ -29,6 +29,7 @@ public:
     unsigned int atlasTexture;
     unsigned int grassmapTexture;
     unsigned int colourmapTexture;
+    unsigned int sunTexture;
 
     glm::vec3 sunDir = glm::vec3(0.f, 0.f, 0.f);
 
@@ -36,8 +37,9 @@ public:
     glm::vec3 nightColour = glm::vec3(0.17f, 0.16f, 0.3f);
 
     float time = 0.f;
+    float skyTime = 0.f;
 
-    uint skyVAO, skyVBO;
+    uint skyVAO = 0, skyVBO = 0;
 
     Renderer(const char *vertPath, const char *fragPath, const char *skyvert, const char *skyfrag, bool genAtlas = false)
     {
@@ -70,6 +72,7 @@ public:
         atlasTexture = loadTexture("../atlas/atlas_256x256.png");
         grassmapTexture = loadTexture("../textures/grass.png");
         colourmapTexture = loadTexture("../textures/foliage.png");
+        sunTexture = loadTexture("../textures/sun.png");
 
         float quadVerts[] = {
             -1.f, -1.f, 1.f, -1.f, 1.f, 1.f,
@@ -86,56 +89,69 @@ public:
 
     void beginFrame()
     {
-        glm::vec3 colour = lerp(nightColour, dayColour, time);
-
-        glClearColor(colour.x, colour.y, colour.z, 1.0f);
+        glClearColor(0.f, 0.f, 0.f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void renderChunks(World& world, Camera* cam) {
-        // In renderChunks, before everything else:
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-        skyShader->use();
-        skyShader->setFloat("time", time); // your -1 to 1 value
+    void renderChunks(World &world, Camera *cam)
+    {
+        shader->use();
+        shader->setInt("atlasTex", 0);
+        shader->setInt("grassmapTex", 1);
+        shader->setInt("colourmapTex", 2);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, atlasTexture);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, grassmapTexture);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, colourmapTexture);
 
-        // Pass rotation-only view matrix
+        // Pass 1: opaque
+        glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        for (auto &pair : world.chunks)
+            pair.second->renderOpaque(shader, cam->GetViewMatrix(), cam->GetProjectionMatrix());
+
+        // Pass 2: liquid
+        glDepthMask(GL_FALSE);
+        glDisable(GL_CULL_FACE);
+        for (auto &pair : world.chunks)
+            pair.second->renderLiquid(shader, cam->GetViewMatrix(), cam->GetProjectionMatrix());
+
+        // Restore before sky
+        glDepthMask(GL_TRUE);
+        glEnable(GL_CULL_FACE);
+
+        // Pass 3: sky — drawn last, depth test off so it only fills pixels
+        // not already written by terrain
+        glDepthMask(GL_FALSE);   // don't write to depth
+        glEnable(GL_DEPTH_TEST); // but DO test — only draw where depth == 1.0
+        glDepthFunc(GL_LEQUAL);  // pass if sky depth (1.0) <= buffer depth (1.0)
+        glDisable(GL_CULL_FACE);
+        skyShader->use();
+        skyShader->setFloat("time", skyTime);
+        skyShader->setInt("sunTex", 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, sunTexture);
         glm::mat4 rotView = glm::mat4(glm::mat3(cam->GetViewMatrix()));
         skyShader->setMat4("invView", glm::inverse(rotView));
         skyShader->setMat4("invProjection", glm::inverse(cam->GetProjectionMatrix()));
-
         glBindVertexArray(skyVAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
-
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
-
-        shader->use();
-        shader->setInt("atlasTex",     0);
-        shader->setInt("grassmapTex",  1);
-        shader->setInt("colourmapTex", 2);
-        glActiveTexture(GL_TEXTURE0); glBindTexture(GL_TEXTURE_2D, atlasTexture);
-        glActiveTexture(GL_TEXTURE1); glBindTexture(GL_TEXTURE_2D, grassmapTexture);
-        glActiveTexture(GL_TEXTURE2); glBindTexture(GL_TEXTURE_2D, colourmapTexture);
-
-        // Pass 1: opaque — depth write on, culling on
+        glDepthFunc(GL_LESS); // restore default
         glDepthMask(GL_TRUE);
         glEnable(GL_CULL_FACE);
-        for (auto& pair : world.chunks)
-            pair.second->renderOpaque(shader, cam->GetViewMatrix(), cam->GetProjectionMatrix());
 
-        // Pass 2: liquid — depth write off, culling off (visible from below too)
-        glDepthMask(GL_FALSE);
-        glDisable(GL_CULL_FACE);
-        for (auto& pair : world.chunks)
-            pair.second->renderLiquid(shader, cam->GetViewMatrix(), cam->GetProjectionMatrix());
-
+        // Restore everything
+        glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
         glEnable(GL_CULL_FACE);
     }
 
     void changeSun() {
+        shader->use();
         shader->setVec3("sunDir", sunDir);
     }
 

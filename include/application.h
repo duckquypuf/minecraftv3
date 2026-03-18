@@ -39,9 +39,15 @@ public:
             world.processChunkQueues();
 
             renderer.beginFrame();
-            float time = glfwGetTime() * 0.1f; // 0.1 controls day speed
-            renderer.sunDir = glm::normalize(glm::vec3(0.0f, sin(time), cos(time)));
-            renderer.time = sin(time);
+            float rawTime = glfwGetTime() * 0.5f;
+            float tilt = glm::radians(23.5f); // Earth's axial tilt, tweak to taste
+            renderer.sunDir = glm::normalize(glm::vec3(
+                sin(rawTime) * sin(tilt), // X offset from tilt
+                sin(rawTime) * cos(tilt), // Y — height in sky
+                cos(rawTime)              // Z — day/night cycle
+                ));
+            renderer.time = sin(rawTime); // frag.glsl still needs -1 to 1 for brightness
+            renderer.skyTime = rawTime;   // skyfrag.glsl gets the raw angle
             renderer.changeSun();
             renderer.renderChunks(world, player.camera);
 

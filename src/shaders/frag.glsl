@@ -55,7 +55,12 @@ void main() {
             texColor *= texture(colourmapTex, colourmapUV);
     }
 
-    float brightness = max(dot(normalize(normal), normalize(sunDir)), 0.0) * 0.5 + 0.5;
+    // sunDir.y is positive at day, negative at night
+    float sunElevation = sunDir.y; // -1 to 1
+    float ambientLight = mix(0.3, 0.5, clamp(sunElevation + 1.0, 0.0, 1.0)); // dark at night, ambient at day
+    float directLight  = max(dot(normalize(normal), normalize(sunDir)), 0.0);
+    float brightness   = ambientLight + directLight * clamp(sunElevation, 0.0, 1.0);
+
     float alpha = ((flags & FLAG_LIQUID) != 0) ? 0.8 : 1.0;
     FragColour = vec4(texColor.rgb * brightness, alpha);
 }
