@@ -11,6 +11,7 @@ out vec4 FragColour;
 uniform sampler2D atlasTex;
 uniform sampler2D grassmapTex;   // slot 1 — always bound
 uniform sampler2D colourmapTex;  // slot 2 — always bound
+uniform vec3 sunDir;
 
 const int FLAG_LIQUID    = 1 << 0;
 const int FLAG_GRASSMAP  = 1 << 1;
@@ -54,7 +55,7 @@ void main() {
             texColor *= texture(colourmapTex, colourmapUV);
     }
 
-    float brightness = max(dot(normalize(normal), normalize(vec3(0.4, 1.0, 0.2))), 0.0) * 0.6 + 0.4;
+    float brightness = max(dot(normalize(normal), normalize(sunDir)), 0.0) * 0.5 + 0.5;
     float alpha = ((flags & FLAG_LIQUID) != 0) ? 0.8 : 1.0;
     FragColour = vec4(texColor.rgb * brightness, alpha);
 }

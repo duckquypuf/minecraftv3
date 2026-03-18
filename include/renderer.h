@@ -15,6 +15,14 @@
 #include "world.h"
 #include "chunk.h"
 
+glm::vec3 lerp(glm::vec3 a, glm::vec3 b, float t) {
+    float x = a.x + t * (b.x - a.x);
+    float y = a.y + t * (b.y - a.y);
+    float z = a.z + t * (b.z - a.z);
+
+    return glm::vec3(x, y, z);
+}
+
 class Renderer
 {
 public:
@@ -22,7 +30,16 @@ public:
     unsigned int grassmapTexture;
     unsigned int colourmapTexture;
 
-    Renderer(const char *vertPath, const char *fragPath, bool genAtlas = false)
+    glm::vec3 sunDir = glm::vec3(0.f, 0.f, 0.f);
+
+    glm::vec3 dayColour = glm::vec3(0.47f, 0.66f, 1.0f);
+    glm::vec3 nightColour = glm::vec3(0.17f, 0.16f, 0.3f);
+
+    float time = 0.f;
+
+    uint skyVAO, skyVBO;
+
+    Renderer(const char *vertPath, const char *fragPath, const char *skyvert, const char *skyfrag, bool genAtlas = false)
     {
         std::cout << "Generating biome-based textures..." << std::endl;
 
@@ -48,19 +65,52 @@ public:
         }
 
         shader = new Shader(vertPath, fragPath);
+        skyShader = new Shader(skyvert, skyfrag);
 
         atlasTexture = loadTexture("../atlas/atlas_256x256.png");
         grassmapTexture = loadTexture("../textures/grass.png");
         colourmapTexture = loadTexture("../textures/foliage.png");
+
+        float quadVerts[] = {
+            -1.f, -1.f, 1.f, -1.f, 1.f, 1.f,
+            -1.f, -1.f, 1.f, 1.f, -1.f, 1.f};
+        glGenVertexArrays(1, &skyVAO);
+        glGenBuffers(1, &skyVBO);
+        glBindVertexArray(skyVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, skyVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVerts), quadVerts, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+        glEnableVertexAttribArray(0);
+        glBindVertexArray(0);
     }
 
     void beginFrame()
     {
-        glClearColor(0.47f, 0.66f, 1.0f, 1.0f);
+        glm::vec3 colour = lerp(nightColour, dayColour, time);
+
+        glClearColor(colour.x, colour.y, colour.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     void renderChunks(World& world, Camera* cam) {
+        // In renderChunks, before everything else:
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+        skyShader->use();
+        skyShader->setFloat("time", time); // your -1 to 1 value
+
+        // Pass rotation-only view matrix
+        glm::mat4 rotView = glm::mat4(glm::mat3(cam->GetViewMatrix()));
+        skyShader->setMat4("invView", glm::inverse(rotView));
+        skyShader->setMat4("invProjection", glm::inverse(cam->GetProjectionMatrix()));
+
+        glBindVertexArray(skyVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
+
         shader->use();
         shader->setInt("atlasTex",     0);
         shader->setInt("grassmapTex",  1);
@@ -85,8 +135,13 @@ public:
         glEnable(GL_CULL_FACE);
     }
 
+    void changeSun() {
+        shader->setVec3("sunDir", sunDir);
+    }
+
 private:
     Shader *shader;
+    Shader *skyShader;
 
     unsigned int loadTexture(const char *path)
     {

@@ -11,7 +11,7 @@ class Application
 {
 public:
     Window window = Window("Minecraft Clone V3", 1440, 900);
-    Renderer renderer = Renderer("../src/shaders/vert.glsl", "../src/shaders/frag.glsl", true);
+    Renderer renderer = Renderer("../src/shaders/vert.glsl", "../src/shaders/frag.glsl", "../src/shaders/skyvert.glsl", "../src/shaders/skyfrag.glsl", true);
     Player player = Player(glm::vec3(halfWorldWidth * chunkWidth, 100.f, halfWorldWidth * chunkWidth));
 
     World world = World(player.currentChunk);
@@ -39,6 +39,10 @@ public:
             world.processChunkQueues();
 
             renderer.beginFrame();
+            float time = glfwGetTime() * 0.1f; // 0.1 controls day speed
+            renderer.sunDir = glm::normalize(glm::vec3(0.0f, sin(time), cos(time)));
+            renderer.time = sin(time);
+            renderer.changeSun();
             renderer.renderChunks(world, player.camera);
 
             player.update();
