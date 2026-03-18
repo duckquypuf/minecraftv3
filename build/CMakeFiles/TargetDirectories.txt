@@ -1,0 +1,3 @@
+/Users/owaismacbook/Documents/minecraftv3/build/CMakeFiles/minecraft.dir
+/Users/owaismacbook/Documents/minecraftv3/build/CMakeFiles/edit_cache.dir
+/Users/owaismacbook/Documents/minecraftv3/build/CMakeFiles/rebuild_cache.dir

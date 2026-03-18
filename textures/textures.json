@@ -1,0 +1,14 @@
+{
+    "textures": [
+        "dirt.png",
+        "grass_side.png",
+        "grass_top.png",
+        "stone.png",
+        "water.png",
+        "sand.png",
+        "oak_log_side.png",
+        "oak_log_top.png",
+        "oak_leaves.png",
+        "grass_foliage.png"
+    ]
+}

@@ -1,0 +1,290 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "minecraft"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 22,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 31,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 11,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : " -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations"
+				}
+			],
+			"frameworks" : 
+			[
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/src"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/thirdparty"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -arch arm64   -Wno-deprecated-declarations"
+				}
+			],
+			"frameworks" : 
+			[
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/src"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/thirdparty"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/opt/homebrew/include"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				4
+			]
+		}
+	],
+	"id" : "minecraft::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-O3 -march=native -DNDEBUG -flto -g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-Wl,-search_paths_first -Wl,-headerpad_max_install_names",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-Wl,-rpath,/opt/homebrew/lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/opt/homebrew/lib/libglfw.3.4.dylib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework OpenGL",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "minecraft",
+	"nameOnDisk" : "minecraft",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/main.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/chunk.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/camera.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/stb_impl.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "thirdparty/glad.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "thirdparty/imgui/imgui.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "thirdparty/imgui/imgui_draw.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "thirdparty/imgui/imgui_tables.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "thirdparty/imgui/imgui_widgets.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "thirdparty/imgui/backends/imgui_impl_glfw.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "thirdparty/imgui/backends/imgui_impl_opengl3.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

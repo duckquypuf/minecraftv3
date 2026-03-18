@@ -1,0 +1,68 @@
+[
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/src/main.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/src/main.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/src/main.cpp",
+  "output": "CMakeFiles/minecraft.dir/src/main.cpp.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/src/chunk.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/src/chunk.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/src/chunk.cpp",
+  "output": "CMakeFiles/minecraft.dir/src/chunk.cpp.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/src/camera.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/src/camera.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/src/camera.cpp",
+  "output": "CMakeFiles/minecraft.dir/src/camera.cpp.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/src/stb_impl.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/src/stb_impl.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/src/stb_impl.cpp",
+  "output": "CMakeFiles/minecraft.dir/src/stb_impl.cpp.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/thirdparty/glad.c.o -c /Users/owaismacbook/Documents/minecraftv3/thirdparty/glad.c",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/thirdparty/glad.c",
+  "output": "CMakeFiles/minecraft.dir/thirdparty/glad.c.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/thirdparty/imgui/imgui.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/imgui.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/imgui.cpp",
+  "output": "CMakeFiles/minecraft.dir/thirdparty/imgui/imgui.cpp.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/thirdparty/imgui/imgui_draw.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/imgui_draw.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/imgui_draw.cpp",
+  "output": "CMakeFiles/minecraft.dir/thirdparty/imgui/imgui_draw.cpp.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/thirdparty/imgui/imgui_tables.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/imgui_tables.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/imgui_tables.cpp",
+  "output": "CMakeFiles/minecraft.dir/thirdparty/imgui/imgui_tables.cpp.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/thirdparty/imgui/imgui_widgets.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/imgui_widgets.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/imgui_widgets.cpp",
+  "output": "CMakeFiles/minecraft.dir/thirdparty/imgui/imgui_widgets.cpp.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/thirdparty/imgui/backends/imgui_impl_glfw.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends/imgui_impl_glfw.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends/imgui_impl_glfw.cpp",
+  "output": "CMakeFiles/minecraft.dir/thirdparty/imgui/backends/imgui_impl_glfw.cpp.o"
+},
+{
+  "directory": "/Users/owaismacbook/Documents/minecraftv3/build",
+  "command": "/usr/bin/clang++  -I/Users/owaismacbook/Documents/minecraftv3/include -I/Users/owaismacbook/Documents/minecraftv3/src -I/Users/owaismacbook/Documents/minecraftv3/thirdparty -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui -I/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks  -O3 -march=native -DNDEBUG -flto -g -std=gnu++17 -arch arm64   -Wno-deprecated-declarations -o CMakeFiles/minecraft.dir/thirdparty/imgui/backends/imgui_impl_opengl3.cpp.o -c /Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends/imgui_impl_opengl3.cpp",
+  "file": "/Users/owaismacbook/Documents/minecraftv3/thirdparty/imgui/backends/imgui_impl_opengl3.cpp",
+  "output": "CMakeFiles/minecraft.dir/thirdparty/imgui/backends/imgui_impl_opengl3.cpp.o"
+}
+]
