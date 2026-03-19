@@ -15,6 +15,7 @@
 #include "input.h"
 #include "player.h"
 #include "world.h"
+#include "renderer.h"
 
 class Window
 {
@@ -94,7 +95,7 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    void drawImGui(Player& player, World& world) {
+    void drawImGui(Player& player, World& world, Renderer& renderer) {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -108,6 +109,8 @@ public:
         ImGui::Text("Block Position: (%d, %d, %d)", player.blockPos.x, player.blockPos.y, player.blockPos.z);
         ImGui::Text("Chunk Position: (%d, %d, %d)", player.chunkPos.x, player.chunkPos.y, player.chunkPos.z);
         ImGui::Text("Current Chunk: (%d, %d)", player.currentChunk.x, player.currentChunk.z);
+        ImGui::Text("Time: %f", renderer.time);
+        ImGui::Text("Sun Dir: %f %f %f", renderer.sunDir.x, renderer.sunDir.y, renderer.sunDir.z);
         ImGui::End();
 
         ImGui::Begin("World");

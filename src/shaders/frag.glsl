@@ -56,10 +56,33 @@ void main() {
     }
 
     // sunDir.y is positive at day, negative at night
-    float sunElevation = sunDir.y; // -1 to 1
-    float ambientLight = mix(0.3, 0.5, clamp(sunElevation + 1.0, 0.0, 1.0)); // dark at night, ambient at day
-    float directLight  = max(dot(normalize(normal), normalize(sunDir)), 0.0);
-    float brightness   = ambientLight + directLight * clamp(sunElevation, 0.0, 1.0);
+    // 1. Create a snapped Day/Night factor
+    // This goes from 0.0 to 1.0 very quickly as the sun rises
+    float dayFactor = smoothstep(-0.15, 0.1, sunDir.y);
+
+    // 2. Define Ambient levels
+    // Day ambient is high (0.7) so blocks stay very bright
+    float ambient = mix(0.1, 0.7, dayFactor);
+
+    // 3. Minecraft-style Directional Shading
+    // Even without the sun, blocks in voxel engines look better if 
+    // the top is brightest and the bottom is darkest.
+    float faceShading = 0.8; // Default for sides
+    if (normal.y > 0.5)  faceShading = 1.0; // Top face
+    if (normal.y < -0.5) faceShading = 0.5; // Bottom face
+    if (abs(normal.z) > 0.5) faceShading = 0.9; // Front/Back variation
+
+    // 4. Direct Sun Light
+    // We add a bit of direct sunlight on top of the ambient
+    float directLight = max(dot(normalize(normal), normalize(sunDir)), 0.0);
+    
+    // Combine everything
+    // During day: (0.7 * faceShading) + (direct * 0.3) -> Max 1.0
+    // During night: (0.1 * faceShading) + (0.0) -> Max 0.1
+    float brightness = (ambient * faceShading) + (directLight * 0.3 * dayFactor);
+
+    // Clamp to ensure we don't over-brighten beyond white
+    brightness = clamp(brightness, 0.0, 1.0);
 
     float alpha = ((flags & FLAG_LIQUID) != 0) ? 0.8 : 1.0;
     FragColour = vec4(texColor.rgb * brightness, alpha);

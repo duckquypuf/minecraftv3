@@ -61,32 +61,42 @@ public:
         } 
         if(!chunksToGenerateTrees.empty()) {
             long long hash = chunksToGenerateTrees.front();
+            ChunkCoord c = ChunkCoord::fromHash(hash);
 
-            if(chunks[hash]->isPopulated) {
+            // Check all 8 neighbors (3x3 grid)
+            bool areaReady = true;
+            for(int nx = -1; nx <= 1; nx++) {
+                for(int nz = -1; nz <= 1; nz++) {
+                    if(chunks.find(ChunkCoord(c.x + nx, c.z + nz).getHash()) == chunks.end()) {
+                        areaReady = false;
+                        break;
+                    }
+                }
+                if(!areaReady) break;
+            }
+
+            if(areaReady) {
                 chunksToGenerateTrees.pop();
 
-                if(chunks.find(hash) != chunks.end()) {
-                    Chunk* chunk = chunks[hash].get();
+                Chunk* chunk = chunks[hash].get();
 
+                for(int x = 0; x < chunkWidth; x++) {
+                    for(int z = 0; z < chunkWidth; z++) {
+                        int y = chunk->getHeight(x, z) + 1;
 
-                    for(int x = 0; x < chunkWidth; x++) {
-                        for(int z = 0; z < chunkWidth; z++) {
-                            int y = chunk->getHeight(x, z) + 1;
+                        if(chunk->voxelMap[x][y][z] != 0) continue;
 
-                            if(chunk->voxelMap[x][y][z] != 0) continue;
+                        uint16_t belowVoxelID = getVoxel(chunk, x, y - 1, z);
 
-                            uint16_t belowVoxelID = getVoxel(chunk, x, y - 1, z);
+                        if (belowVoxelID == 2 || belowVoxelID == 1) {
+                            // We can place a tree here
+                            float treeChance = treeZoneNoise.GetNoise((float)chunk->coord.x * chunkWidth + x, (float)chunk->coord.z * chunkWidth + z);
 
-                            if (belowVoxelID == 2 || belowVoxelID == 1) {
-                                // We can place a tree here
-                                float treeChance = treeZoneNoise.GetNoise((float)chunk->coord.x * chunkWidth + x, (float)chunk->coord.z * chunkWidth + z);
+                            if (treeChance > treeZoneThreshold) {
+                                float treePlacementChance = treePlacementNoise.GetNoise((float)chunk->coord.x * chunkWidth + x + 1000.f, (float)chunk->coord.z * chunkWidth + z + 1000.f);
 
-                                if (treeChance > treeZoneThreshold) {
-                                    float treePlacementChance = treePlacementNoise.GetNoise((float)chunk->coord.x * chunkWidth + x + 1000.f, (float)chunk->coord.z * chunkWidth + z + 1000.f);
-
-                                    if (treePlacementChance > treePlacementThreshold) {
-                                        GenerateTree(chunk, x, y, z);
-                                    }
+                                if (treePlacementChance > treePlacementThreshold) {
+                                    GenerateTree(chunk, x, y, z);
                                 }
                             }
                         }
@@ -95,7 +105,8 @@ public:
                     chunkMeshQueue.push(hash);
                 }
             }
-        } 
+        }
+
         if (!chunkMeshQueue.empty()) {
             long long hash = chunkMeshQueue.front();
             ChunkCoord c = ChunkCoord::fromHash(hash);
@@ -130,7 +141,20 @@ public:
 
         for(int tx = -2; tx <= 2; tx++) {
             for(int tz = -2; tz <= 2; tz++) {
-                if(tx+x < 0 || tx+x >= chunkWidth || tz+z < 0 || tz+z >= chunkWidth) continue;
+                if(tx+x < 0 || tx+x >= chunkWidth || tz+z < 0 || tz+z >= chunkWidth) {
+                    int ox = tx+x<0 ? -1 : tx+x>=chunkWidth ? 1 : 0;
+                    int oz = tz+z<0 ? -1 : tz+z>=chunkWidth ? 1 : 0;
+
+                    ChunkCoord coord(chunk->coord.x+ox, chunk->coord.z+oz);
+
+                    int localX = (tx + x + chunkWidth) % chunkWidth;
+                    int localZ = (tz + z + chunkWidth) % chunkWidth;
+
+                    chunks[coord.getHash()].get()->voxelMap[localX][y + treeHeight - 2][localZ] = 7;
+                    chunks[coord.getHash()].get()->voxelMap[localX][y + treeHeight - 3][localZ] = 7;
+
+                    continue;
+                }
 
                 if(chunk->voxelMap[tx+x][y+treeHeight-2][tz+z] == 0) {
                     if(abs(tx) == 2 && abs(tz) == 2) {
@@ -156,7 +180,19 @@ public:
 
         for(int tx = -1; tx <= 1; tx++) {
             for(int tz = -1; tz <= 1; tz++) {
-                if(tx+x < 0 || tx+x >= chunkWidth || tz+z < 0 || tz+z >= chunkWidth) continue;
+                if(tx+x < 0 || tx+x >= chunkWidth || tz+z < 0 || tz+z >= chunkWidth) {
+                    int ox = tx+x<0 ? -1 : tx+x>=chunkWidth ? 1 : 0;
+                    int oz = tz+z<0 ? -1 : tz+z>=chunkWidth ? 1 : 0;
+                    
+                    ChunkCoord coord(chunk->coord.x+ox, chunk->coord.z+oz);
+
+                    int localX = (tx + x + chunkWidth) % chunkWidth;
+                    int localZ = (tz + z + chunkWidth) % chunkWidth;
+
+                    chunks[coord.getHash()].get()->voxelMap[localX][y + treeHeight - 1][localZ] = 7;
+
+                    continue;
+                }
 
                 if(chunk->voxelMap[tx+x][y+treeHeight-1][tz+z] == 0) {
                     chunk->setVoxel(tx+x, y+treeHeight-1, tz+z, 7); // Oak Leaves

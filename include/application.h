@@ -39,20 +39,20 @@ public:
             world.processChunkQueues();
 
             renderer.beginFrame();
-            float rawTime = glfwGetTime() * 0.5f;
+            float rawTime = glfwGetTime() * 0.1f;
             float tilt = glm::radians(23.5f); // Earth's axial tilt, tweak to taste
             renderer.sunDir = glm::normalize(glm::vec3(
                 sin(rawTime) * sin(tilt), // X offset from tilt
                 sin(rawTime) * cos(tilt), // Y — height in sky
                 cos(rawTime)              // Z — day/night cycle
-                ));
-            renderer.time = sin(rawTime); // frag.glsl still needs -1 to 1 for brightness
+            ));
+            renderer.time = rawTime; // frag.glsl still needs -1 to 1 for brightness
             renderer.skyTime = rawTime;   // skyfrag.glsl gets the raw angle
             renderer.changeSun();
             renderer.renderChunks(world, player.camera);
 
             player.update();
-            window.drawImGui(player, world);
+            window.drawImGui(player, world, renderer);
             window.update();
         }
 
