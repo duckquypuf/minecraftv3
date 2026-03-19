@@ -32,6 +32,7 @@ public:
 
     bool isMeshed = false;
     bool isPopulated = false;
+    bool treesGenerated = false;
 
     Chunk(World* world, ChunkCoord _coord) : coord(_coord) {
         populateVoxelMap(world);

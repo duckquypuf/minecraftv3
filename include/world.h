@@ -13,7 +13,6 @@ public:
 
     std::queue<long long> chunkPopulationQueue;
     std::queue<long long> chunkMeshQueue;
-    std::queue<long long> chunksToGenerateTrees;
 
     World(ChunkCoord& player) {
         /* SETUP NOISE */
@@ -50,81 +49,77 @@ public:
     }
 
     void processChunkQueues() {
-        // 1. Handle Population (One per frame)
+        // Stage 1: populate one chunk per frame
         if (!chunkPopulationQueue.empty()) {
             long long hash = chunkPopulationQueue.front();
             chunkPopulationQueue.pop();
-
             if (chunks.find(hash) == chunks.end()) {
                 chunks[hash] = std::make_unique<Chunk>(this, ChunkCoord::fromHash(hash));
             }
-        } 
-        if(!chunksToGenerateTrees.empty()) {
-            long long hash = chunksToGenerateTrees.front();
-            ChunkCoord c = ChunkCoord::fromHash(hash);
-
-            // Check all 8 neighbors (3x3 grid)
-            bool areaReady = true;
-            for(int nx = -1; nx <= 1; nx++) {
-                for(int nz = -1; nz <= 1; nz++) {
-                    if(chunks.find(ChunkCoord(c.x + nx, c.z + nz).getHash()) == chunks.end()) {
-                        areaReady = false;
-                        break;
-                    }
-                }
-                if(!areaReady) break;
-            }
-
-            if(areaReady) {
-                chunksToGenerateTrees.pop();
-
-                Chunk* chunk = chunks[hash].get();
-
-                for(int x = 0; x < chunkWidth; x++) {
-                    for(int z = 0; z < chunkWidth; z++) {
-                        int y = chunk->getHeight(x, z) + 1;
-
-                        if(chunk->voxelMap[x][y][z] != 0) continue;
-
-                        uint16_t belowVoxelID = getVoxel(chunk, x, y - 1, z);
-
-                        if (belowVoxelID == 2 || belowVoxelID == 1) {
-                            // We can place a tree here
-                            float treeChance = treeZoneNoise.GetNoise((float)chunk->coord.x * chunkWidth + x, (float)chunk->coord.z * chunkWidth + z);
-
-                            if (treeChance > treeZoneThreshold) {
-                                float treePlacementChance = treePlacementNoise.GetNoise((float)chunk->coord.x * chunkWidth + x + 1000.f, (float)chunk->coord.z * chunkWidth + z + 1000.f);
-
-                                if (treePlacementChance > treePlacementThreshold) {
-                                    GenerateTree(chunk, x, y, z);
-                                }
-                            }
-                        }
-                    }
-
-                    chunkMeshQueue.push(hash);
-                }
-            }
         }
 
-        if (!chunkMeshQueue.empty()) {
-            long long hash = chunkMeshQueue.front();
-            ChunkCoord c = ChunkCoord::fromHash(hash);
+        // Stage 2: tree gen — scan all chunks, process any that are ready
+        // Use a separate list to avoid mutating while iterating
+        std::vector<long long> treeDone;
+        for (auto& [hash, chunk] : chunks) {
+            if (chunk->isMeshed || chunk->treesGenerated) continue;
 
-            // Check the 4 immediate neighbors
-            bool neighborsReady = 
-                chunks.count(ChunkCoord(c.x + 1, c.z).getHash()) &&
-                chunks.count(ChunkCoord(c.x - 1, c.z).getHash()) &&
-                chunks.count(ChunkCoord(c.x, c.z + 1).getHash()) &&
-                chunks.count(ChunkCoord(c.x, c.z - 1).getHash());
+            ChunkCoord c = chunk->coord;
+            bool areaReady = true;
+            for (int nx = -1; nx <= 1 && areaReady; nx++)
+                for (int nz = -1; nz <= 1 && areaReady; nz++)
+                    if (chunks.find(ChunkCoord(c.x+nx, c.z+nz).getHash()) == chunks.end())
+                        areaReady = false;
 
-            if (neighborsReady) {
-                chunkMeshQueue.pop();
-                chunks[hash]->generateMesh(this);
-            } else {
-                chunkMeshQueue.pop();
-                chunkMeshQueue.push(hash);
+            if (!areaReady) continue;
+
+            for (int x = 0; x < chunkWidth; x++) {
+                for (int z = 0; z < chunkWidth; z++) {
+                    int y = chunk->getHeight(x, z) + 1;
+                    if (chunk->voxelMap[x][y][z] != 0) continue;
+                    uint16_t below = getVoxel(chunk.get(), x, y-1, z);
+                    if (below == 2 || below == 1) {
+                        float treeChance = treeZoneNoise.GetNoise(
+                            (float)c.x * chunkWidth + x,
+                            (float)c.z * chunkWidth + z);
+                        if (treeChance > treeZoneThreshold) {
+                            float placementChance = treePlacementNoise.GetNoise(
+                                (float)c.x * chunkWidth + x + 1000.f,
+                                (float)c.z * chunkWidth + z + 1000.f);
+                            if (placementChance > treePlacementThreshold)
+                                GenerateTree(chunk.get(), x, y, z);
+                        }
+                    }
+                }
             }
+            chunk->treesGenerated = true;
+            treeDone.push_back(hash);
+        }
+
+        // Stage 3: mesh any chunk that finished trees and has 4 neighbors
+        for (long long hash : treeDone) {
+            ChunkCoord c = ChunkCoord::fromHash(hash);
+            bool neighborsReady =
+                chunks.count(ChunkCoord(c.x+1, c.z).getHash()) &&
+                chunks.count(ChunkCoord(c.x-1, c.z).getHash()) &&
+                chunks.count(ChunkCoord(c.x, c.z+1).getHash()) &&
+                chunks.count(ChunkCoord(c.x, c.z-1).getHash());
+            if (neighborsReady)
+                chunks[hash]->generateMesh(this);
+        }
+
+        // Also mesh any chunk that has trees done but wasn't meshed yet
+        // (handles chunks whose neighbors loaded after them)
+        for (auto& [hash, chunk] : chunks) {
+            if (!chunk->treesGenerated || chunk->isMeshed) continue;
+            ChunkCoord c = chunk->coord;
+            bool neighborsReady =
+                chunks.count(ChunkCoord(c.x+1, c.z).getHash()) &&
+                chunks.count(ChunkCoord(c.x-1, c.z).getHash()) &&
+                chunks.count(ChunkCoord(c.x, c.z+1).getHash()) &&
+                chunks.count(ChunkCoord(c.x, c.z-1).getHash());
+            if (neighborsReady)
+                chunk->generateMesh(this);
         }
     }
 

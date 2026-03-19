@@ -16,7 +16,6 @@ void Chunk::populateVoxelMap(World* world) {
     }
 
     isPopulated = true;
-    world->chunksToGenerateTrees.push(coord.getHash());
 }
 
 void Chunk::generateMesh(World *world)

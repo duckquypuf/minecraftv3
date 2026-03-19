@@ -117,7 +117,6 @@ public:
         ImGui::Text("Render Distance: %d", renderDistance);
         ImGui::Text("Loaded Chunks: %zu", world.chunks.size());
         ImGui::Text("Chunks to Populate: %zu", world.chunkPopulationQueue.size());
-        ImGui::Text("Chunks to Generate Trees: %zu", world.chunksToGenerateTrees.size());
         ImGui::Text("Chunks to Mesh: %zu", world.chunkMeshQueue.size());
         ImGui::End();
 
